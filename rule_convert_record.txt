@@ -1,0 +1,41 @@
+rule 6 convert to rule 1 
+rule 7 convert to rule 2 
+rule 9 convert to rule 3 
+rule 10 convert to rule 4 
+rule 11 convert to rule 5 
+rule 12 convert to rule 6 
+rule 14 convert to rule 7 
+rule 18 convert to rule 8 
+rule 19 convert to rule 9 
+篩選後保留9個rule, 共有 19391 個sample
+
+
+rule 1: total-65, unique-64
+捨棄rule 1
+rule 2: total-109, unique-109
+捨棄rule 2
+rule 3: total-17405, unique-80
+捨棄rule 3
+rule 4: total-179, unique-179
+捨棄rule 4
+rule 5: total-1049, unique-398
+捨棄rule 5
+rule 6: total-3254, unique-3175
+rule 7: total-1411, unique-1331
+rule 8: total-107, unique-105
+捨棄rule 8
+rule 9: total-2248, unique-2025
+rule 10: total-1966, unique-1838
+rule 11: total-2727, unique-2451
+rule 12: total-5297, unique-4356
+rule 13: total-39, unique-39
+捨棄rule 13
+rule 14: total-1275, unique-1208
+rule 15: total-40, unique-38
+捨棄rule 15
+rule 16: total-725, unique-722
+捨棄rule 16
+rule 17: total-614, unique-614
+捨棄rule 17
+rule 18: total-1251, unique-1220
+rule 19: total-2031, unique-1787

@@ -130,7 +130,7 @@ with tf.Graph().as_default():
                         'Benign: {0}/{1}\n'.format(testing_xxx.shape[0]-training_xxx.shape[0] - testing_correct_amount, testing_xxx.shape[0]-training_xxx.shape[0]))
                 else:
                     testing_accuracy.writelines(
-                        'Rule {0}: {1}/{2}\n'.format(j, testing_xxx.shape[0]-training_xxx.shape[0] - testing_correct_amount, testing_xxx.shape[0]-training_xxx.shape[0]-training_xxx.shape[0]))
+                        'Rule {0}: {1}/{2}\n'.format(j, testing_xxx.shape[0]-training_xxx.shape[0] - testing_correct_amount, testing_xxx.shape[0]-training_xxx.shape[0]))
 
             training_accuracy.close()
             testing_accuracy.close()

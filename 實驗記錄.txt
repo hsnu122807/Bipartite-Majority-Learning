@@ -1,0 +1,81 @@
+由於19個rule太多了，且先前的實驗設計不一致
+因此，把19個rule的pattern都做unique
+取得unique後樣本數大於1000的資料進行之前的實驗
+
+資料前處理:
+原本19個rule，符合上述規則僅有9個rule
+透過get_big_size_rules.py取得這9種rule
+rule 6 convert to rule 1, 3175 samples.
+rule 7 convert to rule 2, 1331 samples.
+rule 9 convert to rule 3, 2025 samples.
+rule 10 convert to rule 4, 1838 samples.
+rule 11 convert to rule 5, 2451 samples.
+rule 12 convert to rule 6, 4356 samples.
+rule 14 convert to rule 7, 1208 samples.
+rule 18 convert to rule 8, 1220 samples.
+rule 19 convert to rule 9, 1787 samples.
+共有 19391 個sample
+存成rule_x.txt(x = 1 ~ 9)
+再來要取得相同數量的benign
+由於無法對1187842筆benign做unique(因為記憶體不足，無法這麼做)
+因此採用隨機的方式抽取部分的資料並做unique(get_2w_unique.py)
+(random get 218753 row -> unique -> 57592 -> take 19391)
+取19391筆benign sample當作benign data set
+存放在owl_benign_samples.txt
+由於做了unique，資料內皆無保留原始time stamp
+
+抽樣時由於每次實驗都抽一次train/test會出問題
+所以改成抽一次就好
+train/test資料放在exp_x_x\data當中
+
+實驗1-1:
+    exp_1_1_x.py(x = {softmax, env, bml})
+    input:
+        從rule抽100個sample，並從owl_benign_samples.txt也抽100個
+    實驗:
+        softmax, env, bml
+        outlier rate - 95%
+    分析:
+        code: exp_1_1_analyze.py
+        analyze result: exp_1_1\analyze
+    結論:
+        1.全數跑完，時間效率:(快)bml、softmax、env(慢)
+        2.bml不需要train就可以用cond. L分開所有training data
+        3.bml的分類準確度雖然沒有在各項都是最好的，但整體而言分類準確度最高
+
+實驗1-2:
+
+
+實驗2-1:
+    exp_2_1_x.py(x = {softmax, env, bml})
+    input:
+        從rule抽80%的rule sample，並從owl_benign_samples.txt也抽一樣的數量
+    實驗:
+        softmax, env, bml
+        outlier rate - 95%
+    分析:
+        code: exp_2_1_analyze.py
+        analyze result: exp_2_1\analyze
+    目前:
+        bml和softmax都跑完了
+        env跑超久，不調參數的狀況下節點很容易長太多，所以bp一調整權重square residual就nan，需要特別處理
+        env設定一小時為上限，超過的out of time
+        env只取跑完的畫圖表
+
+
+實驗3-1:
+    exp_3_1_x.py(x = {softmax, env, bml})
+    input:
+        從9個rule各抽一定比率的rule sample，並從owl_benign_samples.txt也抽和總mal sample一樣的數量，暫定10%、50%、80%
+        老師說改成抽100和80%就好
+    實驗:
+        softmax, env, bml
+        outlier rate - 95%
+        each stage bp limit: 10000
+    分析:
+        //code: exp_3_1_analyze.py
+        //analyze result: exp_3_1\analyze
+    目前:
+        10%的bml、softmax都跑很快(40秒內)但env相對很久5905秒
+        50%的bml在每一個stage bp上限10000次的情況下粗略估計需要35個小時才能跑完(跑了8個小時之後的推估)，env更久，但50%的softmax只要1273秒
+        80%的softmax跑完了，運氣很好的只在一開始(stage 54)bp了13次majority都能分類正確(2186秒)
