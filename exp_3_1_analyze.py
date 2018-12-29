@@ -84,6 +84,54 @@ for i in range(3):
                     false_classified_mal_outlier += 1
     file.writelines('{0}, {1}, {2}, {3}, ({4}/{5},{6}/{7}), {8}, {9}\n'.format(path_arr[i], input_amount, method, h_n, false_classified_benign_outlier, total_benign_outlier, false_classified_mal_outlier, total_mal_outlier, execute_time, bp_times))
 
+    # svm
+    target_path = r"{0}\svm\{1}".format(path, path_arr[i])
+    rule = i
+    method = 'svm'
+    h_n = 0
+    with open(target_path + r'\_two_class_training_detail.txt') as f1:
+        while 1:
+            line = f1.readline()
+            if not line:
+                break
+            if "training data amount: " in line:
+                input_amount = int(line.replace("training data amount: ", ""))
+            if "execute time: " in line:
+                execute_time = line.replace("execute time: ", "")
+                execute_time = execute_time.replace(" sec\n", "")
+            if "thinking times count: " in line:
+                bp_times = int(line.replace("thinking times count: ", ""))
+    training_data_order_x_y = np.loadtxt(target_path + r'\training_data_order_x_y.txt', dtype=float, delimiter=' ')
+    outlier_index = int(training_data_order_x_y.shape[0] * 0.95)
+    outlier_data = training_data_order_x_y[outlier_index:]
+    outlier_x = outlier_data[:, 1:-1]
+    outlier_y = outlier_data[:, -1]
+    outlier_order = outlier_data[:, 0]
+
+    false_classified_benign_outlier = 0
+    false_classified_mal_outlier = 0
+    total_benign_outlier = 0
+    total_mal_outlier = 0
+    for j in range(outlier_y.shape[0]):
+        if outlier_y[j] == 1:
+            is_benign = True
+        else:
+            is_benign = False
+        if is_benign:
+            total_benign_outlier += 1
+            if outlier_order[j] >= 0:
+                false_classified_benign_outlier += 1
+        else:
+            total_mal_outlier += 1
+            if outlier_order[j] >= 0:
+                false_classified_mal_outlier += 1
+    file.writelines('Rule {0}, {1}, {2}, {3}, ({4}/{5},{6}/{7}), {8}, {9}\n'.format(rule, input_amount, method, h_n,
+                                                                                    false_classified_benign_outlier,
+                                                                                    total_benign_outlier,
+                                                                                    false_classified_mal_outlier,
+                                                                                    total_mal_outlier, execute_time,
+                                                                                    bp_times))
+
     if i != 2:
         # env
         target_path = r"{0}\env\{1}".format(path, path_arr[i])
@@ -326,4 +374,42 @@ for i in range(3):
         false_classified_benign_train_count = benign_train_result[np.where(~benign_train_result)].shape[0]
         false_classified_benign_test_count = benign_test_result[np.where(~benign_test_result)].shape[0]
     file.writelines('{0}, {1}/{2}, {3}/{4}, {5}/{6}, {7}/{8}\n'.format(path_arr[i], false_classified_benign_train_count, benign_training_data.shape[0], false_classified_mal_train_count, mal_training_data.shape[0], false_classified_benign_test_count, benign_testing_data.shape[0], false_classified_mal_test_count, mal_testing_data.shape[0]))
+file.close()
+
+# svm
+file = open(new_path + r"\softmax_train_test_analyze.txt", 'w')
+file.writelines('Sampling Method, Train FP, Train FN, Test FP, Test FN\n')
+for i in range(3):
+    target_path = r"{0}\svm\{1}".format(path, path_arr[i])
+    with open(target_path + r'\_training_analyze.txt') as f1:
+        while 1:
+            line = f1.readline()
+            if not line:
+                break
+            if "benign accuracy: " in line:
+                benign_train_acc = line.replace("benign accuracy: ", "")
+                benign_train_acc = benign_train_acc.split(' , ')[0]
+            if "mal accuracy: " in line:
+                mal_train_acc = line.replace("mal accuracy: ", "")
+                mal_train_acc = mal_train_acc.split(' , ')[0]
+    with open(target_path + r'\_testing_analyze.txt') as f1:
+        while 1:
+            line = f1.readline()
+            if not line:
+                break
+            if "benign accuracy: " in line:
+                benign_test_acc = line.replace("benign accuracy: ", "")
+                benign_test_acc = benign_test_acc.split(' , ')[0]
+            if "mal accuracy: " in line:
+                mal_test_acc = line.replace("mal accuracy: ", "")
+                mal_test_acc = mal_test_acc.split(' , ')[0]
+    one = int(benign_train_acc.split('/')[1]) - int(benign_train_acc.split('/')[0])
+    two = int(benign_train_acc.split('/')[1])
+    three = int(mal_train_acc.split('/')[1]) - int(mal_train_acc.split('/')[0])
+    four = int(mal_train_acc.split('/')[1])
+    five = int(benign_test_acc.split('/')[1]) - int(benign_test_acc.split('/')[0])
+    six = int(benign_test_acc.split('/')[1])
+    seven = int(mal_test_acc.split('/')[1]) - int(mal_test_acc.split('/')[0])
+    eight = int(mal_test_acc.split('/')[1])
+    file.writelines('Rule {0}, {1}/{2}, {3}/{4}, {5}/{6}, {7}/{8}\n'.format(i, one, two, three, four, five, six, seven, eight))
 file.close()
